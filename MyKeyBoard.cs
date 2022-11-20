@@ -2,6 +2,7 @@
 using Microsoft.Windows.Themes;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Runtime.CompilerServices;
@@ -96,6 +97,7 @@ namespace keyboard_v7
                 new uncButton(320, 425, "Space", Red, 500,' ',' ')
             };
             this.myInterface = new ProgrammInterface(true, false, textToEnter, this);
+
 
         }
         public void ShowTrainer()
@@ -673,6 +675,8 @@ namespace keyboard_v7
                 countSlider.ValueChanged += txtCountChangingValue;
                 start.Click += startTraining;
                 stop.Click += stopTraining;
+                InputLanguageManager.SetInputLanguage(tB, new CultureInfo("en-US"));
+
             }
             void startTraining(object sender, RoutedEventArgs e)
             {
@@ -697,9 +701,9 @@ namespace keyboard_v7
                 start.IsEnabled = true;
                 str.Text = "Choose the difficulty level, number of characters and press start button";
                 TimeSpan required = DateTime.Now - startTime;
-                txtcharInsec.Text = $"Characters in sec: {count / ((int)required.TotalSeconds + 1)}";
+                txtcharInsec.Text = $"Characters in sec: {Math.Round(count / required.TotalSeconds, 2, MidpointRounding.ToEven)}";
                 txtFails.Text = $"Fails: {fails}";
-                MessageBox.Show($"It required u " + (int)required.TotalSeconds + " secs to enter the text\nTotal fails:" + fails);
+                MessageBox.Show($"It required u " + Math.Round(required.TotalSeconds, 3, MidpointRounding.ToEven) + " secs to enter the text\nTotal fails:" + fails);
                 isStarted = false;
             }
             public Canvas Show()
@@ -717,6 +721,8 @@ namespace keyboard_v7
                 canvasToShow.Children.Add(tB);
                 canvasToShow.Children.Add(txtFails);
                 canvasToShow.Children.Add(txtcharInsec);
+                DependencyObject focusScope = FocusManager.GetFocusScope(tB);
+                FocusManager.SetFocusedElement(focusScope, tB);
                 return canvasToShow;
             }
             private void textChangedEventHandler(object sender, TextChangedEventArgs args)
